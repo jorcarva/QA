@@ -50,12 +50,34 @@ Para desenvolvimento com recarga automática: `npm run dev`.
 | POST   | `/api/comments/:id/like`  | sessão        |
 | PUT    | `/api/question`           | só admin      |
 
+## Dois back-ends no mesmo repositório
+
+- **Netlify** (predefinido para deploy): front-end estático em `public/` + **Netlify
+  Functions** (`netlify/functions/`) + **Netlify Blobs** como armazenamento. Não precisa
+  de servidor sempre ligado nem de base de dados externa.
+- **Node.js (Render/Railway/VPS)**: o `server.js` (Express + SQLite) serve o mesmo
+  front-end e a mesma API. Use `npm start`.
+
+Ambos partilham o front-end em `public/`, as mesmas 4 contas e o mesmo estado inicial.
+
 ## Deploy
 
-Este projeto precisa de um host que corra **Node.js** (não serve como site estático,
-porque os comentários são partilhados via servidor).
+### Netlify (este repositório já está configurado)
 
-### Render (recomendado)
+O ficheiro `netlify.toml` define `publish = "public"`, a pasta de funções e os
+_redirects_ de `/api/*` para as funções. Passos:
+
+1. No Netlify: **Add new site → Import an existing project** e escolha o repositório
+   `jorcarva/QA` (ou faça _Trigger deploy_ se já estiver ligado).
+2. Em **Site settings → Environment variables**, adicione `SESSION_SECRET` com um valor
+   aleatório (assina os cookies de sessão).
+3. Deploy. O **Netlify Blobs** é ativado automaticamente; os comentários ficam guardados
+   e partilhados entre todos os visitantes.
+
+> Não é preciso definir _build command_ (o site é estático); o Netlify instala as
+> dependências e empacota as funções sozinho.
+
+### Render
 
 1. Faça _push_ do repositório para o GitHub.
 2. No [Render](https://render.com): **New → Blueprint** e aponte para este repositório

@@ -1,0 +1,50 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# /api/* é mapeado para as Netlify Functions. A regra mais específica
+# (comments/:id/like) tem de vir antes da mais genérica (comments).
+[[redirects]]
+  from = "/api/comments/:id/like"
+  to = "/.netlify/functions/like?commentId=:id"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/comments"
+  to = "/.netlify/functions/comment"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/question"
+  to = "/.netlify/functions/question"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/login"
+  to = "/.netlify/functions/login"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/logout"
+  to = "/.netlify/functions/logout"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/me"
+  to = "/.netlify/functions/me"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/state"
+  to = "/.netlify/functions/state"
+  status = 200
+  force = true
