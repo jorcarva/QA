@@ -28,8 +28,19 @@
       body: body ? JSON.stringify(body) : undefined,
       credentials: "same-origin"
     }).then(function (res) {
-      return res.json().catch(function () { return {}; }).then(function (data) {
-        if (!res.ok) { var e = new Error(data.error || "Erro"); e.status = res.status; throw e; }
+      return res.text().then(function (raw) {
+        var data;
+        try { data = raw ? JSON.parse(raw) : {}; } catch (e) { data = null; }
+        if (!res.ok) {
+          var err = new Error((data && data.error) || ("HTTP " + res.status));
+          err.status = res.status; err.raw = raw; err.url = url;
+          throw err;
+        }
+        if (data === null) {
+          var err2 = new Error("Resposta não-JSON (as Netlify Functions não estão a responder).");
+          err2.status = res.status; err2.raw = raw; err2.url = url;
+          throw err2;
+        }
         return data;
       });
     });
@@ -377,9 +388,15 @@
   wire();
   api("GET", "/api/me").then(function (data) { state.me = data.user; }).catch(function () {})
     .then(refresh).then(renderTopbar)
-    .catch(function () {
+    .catch(function (err) {
+      var status = err && err.status ? (" (HTTP " + err.status + ")") : "";
+      var hint = (err && err.status === 404)
+        ? "As funções /api/* devolveram 404 — provavelmente o site foi publicado como ficheiros estáticos, sem Netlify Functions. Ligue o site ao repositório GitHub."
+        : "Abra /api/state no navegador para ver o erro da função (defina a variável SESSION_SECRET no Netlify).";
       document.getElementById("thread").innerHTML =
-        '<div class="empty">Não foi possível contactar o servidor.</div>';
+        '<div class="empty">Não foi possível contactar o servidor' + status + '.<br>' +
+        '<small>' + hint + '</small></div>';
+      console.error("Falha no arranque:", err, err && err.raw);
     });
 
 })();
