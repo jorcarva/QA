@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Pergunta do Dia</title>
+  <meta name="description" content="Plataforma de pergunta do dia com comentários, likes e respostas.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"></div>
+
+  <header class="topbar" id="topbar"></header>
+
+  <main class="wrap">
+    <div class="head" id="head">
+      <span class="badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Pergunta do dia
+      </span>
+      <h1 class="question" id="question">A carregar…</h1>
+      <div class="q-edit-row" id="qEditRow"></div>
+      <div class="q-editor" id="qEditor">
+        <textarea class="q-input" id="qInput" rows="2" maxlength="200"></textarea>
+        <div class="q-editor-actions">
+          <button class="btn primary" id="qSave">Guardar pergunta</button>
+          <button class="btn" id="qCancel">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="composer-zone">
+      <div class="composer" id="composer">
+        <svg class="pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <input id="mainInput" type="text" placeholder="Partilhe a sua opinião…" maxlength="500" disabled autocomplete="off">
+        <div class="sep"></div>
+        <button class="send" id="mainSend" disabled aria-label="Enviar comentário">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+        </button>
+      </div>
+      <div class="lock-note" id="lockNote">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span><button id="openLogin">Inicie sessão</button> para comentar</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="sec-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Comentários <span class="count" id="cCount"></span>
+    </div>
+    <div class="thread" id="thread">
+      <div class="loading">A carregar comentários…</div>
+    </div>
+  </main>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <button class="btn ghost modal-close" id="modalClose" aria-label="Fechar">✕</button>
+      <h2>Iniciar sessão</h2>
+      <p class="sub">Escolha uma conta de teste para comentar, reagir e responder.</p>
+
+      <div class="quick-label">Contas de teste</div>
+      <div class="accounts" id="accountList"></div>
+
+      <div class="divider-or">ou com utilizador e palavra-passe</div>
+      <form id="loginForm">
+        <div class="field-row">
+          <label for="uname">Utilizador</label>
+          <input id="uname" type="text" autocomplete="username" placeholder="ex: ana">
+        </div>
+        <div class="field-row">
+          <label for="pw">Palavra-passe</label>
+          <input id="pw" type="password" autocomplete="current-password" placeholder="••••••">
+        </div>
+        <p class="err" id="loginErr"></p>
+        <div class="modal-actions">
+          <button type="submit" class="btn primary">Entrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

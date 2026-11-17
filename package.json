@@ -1,0 +1,19 @@
+{
+  "name": "pergunta-do-dia",
+  "version": "1.0.0",
+  "description": "Plataforma de pergunta do dia com comentarios, likes e respostas (Express + SQLite).",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1"
+  }
+}

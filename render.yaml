@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: pergunta-do-dia
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DB_PATH
+        value: /var/data/qa.db
+    # Disco persistente para a base de dados SQLite sobreviver a reinícios/deploys.
+    # (Discos no Render requerem um plano pago. No plano "free" remova este bloco
+    #  e o DB_PATH acima; a base de dados fica em ./data e é recriada a cada deploy.)
+    disk:
+      name: data
+      mountPath: /var/data
+      sizeGB: 1
