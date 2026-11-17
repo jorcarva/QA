@@ -130,7 +130,18 @@ const q = {
   hasLike: db.prepare("SELECT 1 FROM likes WHERE comment_id = ? AND user_id = ?"),
   addLike: db.prepare("INSERT OR IGNORE INTO likes (comment_id, user_id) VALUES (?, ?)"),
   removeLike: db.prepare("DELETE FROM likes WHERE comment_id = ? AND user_id = ?"),
+  replyIds: db.prepare("SELECT id FROM comments WHERE parent_id = ?"),
+  deleteComment: db.prepare("DELETE FROM comments WHERE id = ?"),
+  deleteReplies: db.prepare("DELETE FROM comments WHERE parent_id = ?"),
+  deleteLikes: db.prepare("DELETE FROM likes WHERE comment_id = ?"),
 };
+
+const deleteCommentTx = db.transaction((commentId) => {
+  for (const r of q.replyIds.all(commentId)) q.deleteLikes.run(r.id);
+  q.deleteReplies.run(commentId);
+  q.deleteLikes.run(commentId);
+  q.deleteComment.run(commentId);
+});
 
 /* ---------------------------------------------------------------- *
  *  App
@@ -264,6 +275,14 @@ app.post("/api/comments/:id/like", requireAuth, (req, res) => {
   else q.addLike.run(commentId, req.user.id);
 
   res.json(buildState(req.user.id));
+});
+
+app.delete("/api/comments/:id", requireAdmin, (req, res) => {
+  const commentId = req.params.id;
+  const exists = q.commentById.get(commentId);
+  if (!exists) return res.status(404).json({ error: "Comentário não encontrado." });
+  deleteCommentTx(commentId);
+  res.json(buildState(req.session.userId));
 });
 
 /* ------------------------ Static site --------------------------- */

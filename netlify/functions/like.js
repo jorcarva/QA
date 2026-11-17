@@ -1,5 +1,5 @@
 "use strict";
-const { initBlobs, currentUser, getComment, putComment, buildState, json } = require("./lib/common");
+const { initBlobs, currentUser, getComment, putComment, buildState, json, commentIdFromPath } = require("./lib/common");
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") return json(405, { error: "Método não permitido." });
@@ -7,7 +7,7 @@ exports.handler = async (event) => {
   const user = currentUser(event);
   if (!user) return json(401, { error: "Sessão necessária." });
 
-  const commentId = event.queryStringParameters && event.queryStringParameters.commentId;
+  const commentId = commentIdFromPath(event, "like");
   if (!commentId) return json(400, { error: "Comentário em falta." });
 
   const comment = await getComment(commentId);

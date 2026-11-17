@@ -320,6 +320,7 @@ img { max-width: 100%; }
 .act svg { width: 16px; height: 16px; }
 .act.liked { color: var(--like); }
 .act.liked svg { fill: var(--like); stroke: var(--like); }
+.act.act-del:hover { color: var(--like); }
 .act[disabled] { cursor: not-allowed; opacity: 0.55; }
 .act[disabled]:hover { color: var(--muted); }
 

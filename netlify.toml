@@ -14,6 +14,12 @@
   force = true
 
 [[redirects]]
+  from = "/api/comments/:id"
+  to = "/.netlify/functions/commentDelete?commentId=:id"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/api/comments"
   to = "/.netlify/functions/comment"
   status = 200

@@ -194,6 +194,16 @@
       });
       actions.appendChild(replyBtn);
     }
+
+    if (state.me && state.me.role === "admin") {
+      var delBtn = el("button", "act act-del");
+      delBtn.innerHTML =
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6"/><path d="M10 11v6M14 11v6"/></svg>'
+        + '<span>Eliminar</span>';
+      delBtn.addEventListener("click", function () { deleteComment(c.id); });
+      actions.appendChild(delBtn);
+    }
+
     body.appendChild(actions);
 
     if (!isReply) {
@@ -273,6 +283,13 @@
     api("POST", "/api/comments/" + encodeURIComponent(id) + "/like")
       .then(function (s) { applyState(s); renderThread(); })
       .catch(function (e) { reauthOr(e); });
+  }
+  function deleteComment(id) {
+    if (!state.me || state.me.role !== "admin") return;
+    if (!window.confirm("Eliminar este comentário (e as suas respostas)?")) return;
+    api("DELETE", "/api/comments/" + encodeURIComponent(id))
+      .then(function (s) { applyState(s); renderThread(); })
+      .catch(function (e) { alert(e.message || "Não foi possível eliminar."); reauthOr(e); });
   }
   function saveQuestion(text) {
     api("PUT", "/api/question", { text: text })

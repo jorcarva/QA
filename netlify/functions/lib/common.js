@@ -96,6 +96,22 @@ async function listCommentIds() {
   return Array.from(ids);
 }
 
+async function deleteCommentAndReplies(id) {
+  const s = store();
+  const ids = await listCommentIds();
+  const docs = await Promise.all(ids.map((cid) => getComment(cid)));
+  const toDelete = new Set([id]);
+  docs.forEach((c) => { if (c && c.parentId === id) toDelete.add(c.id); });
+
+  for (const did of toDelete) await s.delete("comments/" + did);
+
+  const idx = (await s.get("index", { type: "json" })) || { commentIds: [] };
+  idx.commentIds = (idx.commentIds || []).filter((x) => !toDelete.has(x));
+  await s.setJSON("index", idx);
+
+  return Array.from(toDelete);
+}
+
 async function addToIndex(id) {
   const s = store();
   const idx = (await s.get("index", { type: "json" })) || { commentIds: [] };
@@ -116,9 +132,10 @@ async function buildState(viewerId, opts) {
   // eventual pode ainda devolver a versão antiga numa leitura imediata).
   const overrides = Object.assign({}, seedInfo ? seedInfo.comments : {}, opts.comments || {});
 
+  const exclude = new Set(opts.exclude || []);
   const idSet = new Set(await listCommentIds());
   Object.keys(overrides).forEach((id) => idSet.add(id));
-  const ids = Array.from(idSet);
+  const ids = Array.from(idSet).filter((id) => !exclude.has(id));
   const docs = await Promise.all(ids.map((id) => (overrides[id] ? overrides[id] : getComment(id))));
 
   const comments = [];
@@ -200,6 +217,19 @@ function json(statusCode, obj, extraHeaders) {
     body: JSON.stringify(obj),
   };
 }
+// Extrai o id do comentário a partir do URL (o placeholder :id do redirect
+// do Netlify não é passado na query string, por isso lemos do caminho).
+function commentIdFromPath(event, kind) {
+  const qp = event.queryStringParameters || {};
+  if (qp.commentId) return qp.commentId;
+  const src = event.rawUrl || event.path || "";
+  const re = kind === "like"
+    ? /\/comments\/([^/?]+)\/like/
+    : /\/comments\/([^/?]+)(?:[/?]|$)/;
+  const m = src.match(re);
+  return m ? decodeURIComponent(m[1]) : null;
+}
+
 function parseBody(event) {
   if (!event.body) return {};
   let raw = event.body;
@@ -212,7 +242,7 @@ module.exports = {
   USERS, userById, userByUsername, publicUser,
   initBlobs,
   store, ensureSeed, getQuestion, setQuestion,
-  getComment, putComment, listCommentIds, addToIndex, buildState,
+  getComment, putComment, listCommentIds, addToIndex, deleteCommentAndReplies, buildState,
   sign, verifyToken, currentUser, cookieHeader, safeEqual,
-  json, parseBody,
+  json, parseBody, commentIdFromPath,
 };
