@@ -13,7 +13,7 @@ exports.handler = async (event) => {
   if (!text) return json(400, { error: "A pergunta não pode estar vazia." });
   if (text.length > 200) return json(400, { error: "Máximo de 200 caracteres." });
 
-  await setQuestion(text);
-  const state = await buildState(user.id);
+  const doc = await setQuestion(text);
+  const state = await buildState(user.id, { question: doc });
   return json(200, state);
 };

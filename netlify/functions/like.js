@@ -20,6 +20,6 @@ exports.handler = async (event) => {
   comment.likedBy = likedBy;
   await putComment(comment);
 
-  const state = await buildState(user.id);
+  const state = await buildState(user.id, { comments: { [comment.id]: comment } });
   return json(200, state);
 };

@@ -30,19 +30,20 @@ const SECRET = process.env.SESSION_SECRET || "dev-secret-change-me";
 
 /* ----------------------------- Blobs ----------------------------- */
 function store() {
-  return getStore({ name: "qa", consistency: "strong" });
+  // Consistência padrão (eventual): a opção "strong" não está disponível
+  // neste ambiente. As alterações do próprio utilizador são refletidas na
+  // resposta via overrides em buildState.
+  return getStore("qa");
 }
 
 async function ensureSeed() {
   const s = store();
-  const seeded = await s.get("meta/seeded");
-  if (seeded) return;
+  if (await s.get("meta/seeded")) return null;
 
-  await s.setJSON("question", { text: DEFAULT_QUESTION, updatedAt: Date.now() });
-
+  const question = { text: DEFAULT_QUESTION, updatedAt: Date.now() };
   const likedBy = [];
   for (let i = 1; i <= 23; i++) likedBy.push("guest-" + i);
-  await s.setJSON("comments/seed-joao", {
+  const joao = {
     id: "seed-joao",
     authorId: "joao",
     authorName: "João Silva",
@@ -50,10 +51,16 @@ async function ensureSeed() {
     createdAt: Date.now() - 2 * 60 * 60 * 1000,
     parentId: null,
     likedBy: likedBy,
-  });
+  };
 
-  await s.setJSON("index", { commentIds: ["seed-joao"] });
+  // Sets guardados: não sobrescrevem dados já existentes (evita apagar
+  // comentários durante a janela de propagação da consistência eventual).
+  if (!(await s.get("question"))) await s.setJSON("question", question);
+  if (!(await s.get("index"))) await s.setJSON("index", { commentIds: ["seed-joao"] });
+  if (!(await s.get("comments/seed-joao"))) await s.setJSON("comments/seed-joao", joao);
   await s.set("meta/seeded", "1");
+
+  return { question: question, comments: { "seed-joao": joao } };
 }
 
 async function getQuestion() {
@@ -62,7 +69,9 @@ async function getQuestion() {
 }
 
 async function setQuestion(text) {
-  await store().setJSON("question", { text: text, updatedAt: Date.now() });
+  const doc = { text: text, updatedAt: Date.now() };
+  await store().setJSON("question", doc);
+  return doc;
 }
 
 async function getComment(id) {
@@ -95,11 +104,22 @@ async function addToIndex(id) {
   await s.setJSON("index", idx);
 }
 
-async function buildState(viewerId) {
-  await ensureSeed();
-  const q = await getQuestion();
-  const ids = await listCommentIds();
-  const docs = await Promise.all(ids.map((id) => getComment(id)));
+async function buildState(viewerId, opts) {
+  opts = opts || {};
+  const seedInfo = await ensureSeed();
+
+  let q = await getQuestion();
+  if (seedInfo) q = seedInfo.question;
+  if (opts.question) q = opts.question;
+
+  // Overrides: documentos acabados de escrever nesta função (consistência
+  // eventual pode ainda devolver a versão antiga numa leitura imediata).
+  const overrides = Object.assign({}, seedInfo ? seedInfo.comments : {}, opts.comments || {});
+
+  const idSet = new Set(await listCommentIds());
+  Object.keys(overrides).forEach((id) => idSet.add(id));
+  const ids = Array.from(idSet);
+  const docs = await Promise.all(ids.map((id) => (overrides[id] ? overrides[id] : getComment(id))));
 
   const comments = [];
   for (const c of docs) {

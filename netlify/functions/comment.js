@@ -23,7 +23,7 @@ exports.handler = async (event) => {
   }
 
   const id = crypto.randomUUID();
-  await putComment({
+  const doc = {
     id,
     authorId: user.id,
     authorName: user.name,
@@ -31,9 +31,10 @@ exports.handler = async (event) => {
     createdAt: Date.now(),
     parentId,
     likedBy: [],
-  });
+  };
+  await putComment(doc);
   await addToIndex(id);
 
-  const state = await buildState(user.id);
+  const state = await buildState(user.id, { comments: { [id]: doc } });
   return json(201, state);
 };
