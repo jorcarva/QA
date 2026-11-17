@@ -1,10 +1,11 @@
 /* Pergunta do Dia — layout: coluna central sobre aurora pastel. */
 :root {
-  --bg: #f6f1fb;
-  --aurora-1: rgba(201, 163, 245, 0.55);
-  --aurora-2: rgba(243, 168, 216, 0.50);
-  --aurora-3: rgba(168, 197, 245, 0.45);
-  --aurora-4: rgba(255, 212, 196, 0.50);
+  --bg: #f4eff8;
+  --aurora-1: rgba(190, 162, 234, 0.42);
+  --aurora-2: rgba(240, 164, 206, 0.40);
+  --aurora-3: rgba(178, 188, 238, 0.38);
+  --aurora-4: rgba(255, 208, 180, 0.42);
+  --center-glow: rgba(255, 255, 255, 0.72);
   --fg: #2b2435;
   --muted: #8a8398;
   --faint: #b4adbf;
@@ -26,10 +27,11 @@
   :root {
     color-scheme: dark;
     --bg: #141019;
-    --aurora-1: rgba(124, 58, 237, 0.42);
-    --aurora-2: rgba(219, 94, 170, 0.32);
-    --aurora-3: rgba(74, 110, 196, 0.34);
-    --aurora-4: rgba(196, 120, 96, 0.30);
+    --aurora-1: rgba(130, 80, 220, 0.34);
+    --aurora-2: rgba(210, 100, 170, 0.26);
+    --aurora-3: rgba(90, 120, 200, 0.28);
+    --aurora-4: rgba(200, 130, 110, 0.24);
+    --center-glow: rgba(255, 255, 255, 0.04);
     --fg: #ece8f2;
     --muted: #9a93a8;
     --faint: #6f6880;
@@ -66,10 +68,12 @@ img { max-width: 100%; }
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(42vw 42vw at 12% 8%, var(--aurora-3), transparent 62%),
-    radial-gradient(40vw 40vw at 92% 10%, var(--aurora-4), transparent 60%),
-    radial-gradient(48vw 48vw at 8% 96%, var(--aurora-1), transparent 60%),
-    radial-gradient(46vw 46vw at 94% 92%, var(--aurora-2), transparent 60%),
+    radial-gradient(58% 52% at 3% -2%, var(--aurora-3), transparent 58%),
+    radial-gradient(56% 50% at 98% -4%, var(--aurora-4), transparent 56%),
+    radial-gradient(40% 62% at 104% 46%, var(--aurora-2), transparent 56%),
+    radial-gradient(60% 56% at -4% 104%, var(--aurora-1), transparent 58%),
+    radial-gradient(56% 56% at 103% 104%, var(--aurora-2), transparent 58%),
+    radial-gradient(56% 44% at 50% 30%, var(--center-glow), transparent 72%),
     var(--bg);
 }
 
