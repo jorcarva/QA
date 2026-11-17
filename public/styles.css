@@ -2,11 +2,14 @@
 :root {
   color-scheme: light;
   --bg: #ffffff;
-  --dot: rgba(99, 91, 122, 0.06);
-  --ring-a: rgba(124, 58, 237, 0.13);
-  --ring-b: rgba(224, 85, 127, 0.11);
-  --orb-a: rgba(236, 170, 214, 0.30);
-  --orb-b: rgba(178, 190, 240, 0.30);
+  --dot: rgba(96, 86, 120, 0.11);
+  --ring-a: rgba(124, 58, 237, 0.22);
+  --ring-b: rgba(224, 85, 127, 0.20);
+  --ring-c: rgba(96, 135, 232, 0.18);
+  --orb-a: rgba(236, 166, 214, 0.50);
+  --orb-b: rgba(172, 186, 244, 0.50);
+  --orb-c: rgba(250, 206, 176, 0.45);
+  --dot-solid: rgba(124, 58, 237, 0.22);
   --fg: #2b2435;
   --muted: #8a8398;
   --faint: #b4adbf;
@@ -44,58 +47,101 @@ img { max-width: 100%; }
   z-index: -1;
   overflow: hidden;
   background-color: var(--bg);
-  /* textura abstrata de pontos muito ténue sobre o branco */
-  background-image: radial-gradient(var(--dot) 1px, transparent 1.6px);
-  background-size: 26px 26px;
-  background-position: -13px -13px;
+  /* textura abstrata de pontos: uma malha fina + uma mais larga/difusa */
+  background-image:
+    radial-gradient(var(--dot) 1.3px, transparent 1.7px),
+    radial-gradient(var(--dot) 1px, transparent 1.4px);
+  background-size: 24px 24px, 72px 72px;
+  background-position: 0 0, 12px 12px;
 }
 .aurora .shape { position: absolute; display: block; }
 
-/* anéis finos abstratos */
+/* anéis abstratos */
 .aurora .ring {
   border-radius: 50%;
-  border: 1.5px solid var(--ring-a);
+  border: 2px solid var(--ring-a);
 }
 .aurora .ring-1 {
-  width: 440px; height: 440px;
+  width: 460px; height: 460px;
   top: -150px; left: -130px;
 }
 .aurora .ring-2 {
-  width: 560px; height: 560px;
-  right: -190px; bottom: -220px;
+  width: 580px; height: 580px;
+  right: -190px; bottom: -230px;
+  border-color: var(--ring-b);
+}
+.aurora .ring-3 {
+  width: 240px; height: 240px;
+  left: 6%; bottom: 10%;
+  border-color: var(--ring-c);
+  border-style: dashed;
+  opacity: 0.8;
+}
+.aurora .ring-4 {
+  width: 150px; height: 150px;
+  right: 12%; top: 14%;
   border-color: var(--ring-b);
 }
 
-/* halos suaves nos cantos */
+/* halos suaves de cor */
 .aurora .orb {
   border-radius: 50%;
-  filter: blur(18px);
+  filter: blur(22px);
 }
 .aurora .orb-1 {
-  width: 360px; height: 360px;
-  top: -120px; right: -90px;
-  background: radial-gradient(circle at center, var(--orb-a), transparent 68%);
+  width: 420px; height: 420px;
+  top: -130px; right: -90px;
+  background: radial-gradient(circle at center, var(--orb-a), transparent 70%);
 }
 .aurora .orb-2 {
-  width: 400px; height: 400px;
-  left: -130px; bottom: -150px;
-  background: radial-gradient(circle at center, var(--orb-b), transparent 68%);
+  width: 460px; height: 460px;
+  left: -150px; bottom: -160px;
+  background: radial-gradient(circle at center, var(--orb-b), transparent 70%);
+}
+.aurora .orb-3 {
+  width: 300px; height: 300px;
+  right: 18%; bottom: 4%;
+  background: radial-gradient(circle at center, var(--orb-c), transparent 70%);
 }
 
-/* traço fino na diagonal */
-.aurora .bar-1 {
-  width: 220px; height: 1.5px;
-  top: 24%; right: 8%;
+/* traços finos na diagonal */
+.aurora .bar {
+  height: 2px;
   background: linear-gradient(90deg, transparent, var(--ring-a), transparent);
+}
+.aurora .bar-1 {
+  width: 260px;
+  top: 22%; right: 7%;
   transform: rotate(-24deg);
 }
+.aurora .bar-2 {
+  width: 200px;
+  bottom: 30%; left: 5%;
+  background: linear-gradient(90deg, transparent, var(--ring-c), transparent);
+  transform: rotate(18deg);
+}
 
-@media (max-width: 560px) {
-  .aurora .ring-1 { width: 300px; height: 300px; top: -110px; left: -110px; }
-  .aurora .ring-2 { width: 360px; height: 360px; right: -140px; bottom: -160px; }
-  .aurora .orb-1 { width: 240px; height: 240px; }
-  .aurora .orb-2 { width: 260px; height: 260px; }
-  .aurora .bar-1 { display: none; }
+/* aglomerados de pontos de destaque (box-shadow replica vários pontos) */
+.aurora .dots-cluster {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--dot-solid);
+  box-shadow:
+     22px 10px 0 var(--dot-solid),  44px -6px 0 var(--dot-solid),
+      8px 30px 0 var(--dot-solid),  40px 28px 0 var(--dot-solid),
+    -14px 18px 0 var(--dot-solid),  66px 14px 0 var(--dot-solid),
+     30px 52px 0 var(--dot-solid),  -4px 48px 0 var(--dot-solid);
+}
+.aurora .dc-1 { top: 30%; left: 9%; }
+.aurora .dc-2 { top: 60%; right: 10%; }
+
+@media (max-width: 680px) {
+  .aurora .ring-4, .aurora .bar-1, .aurora .bar-2,
+  .aurora .dots-cluster, .aurora .orb-3, .aurora .ring-3 { display: none; }
+  .aurora .ring-1 { width: 320px; height: 320px; top: -110px; left: -110px; }
+  .aurora .ring-2 { width: 380px; height: 380px; right: -150px; bottom: -170px; }
+  .aurora .orb-1 { width: 260px; height: 260px; }
+  .aurora .orb-2 { width: 280px; height: 280px; }
 }
 
 .wrap {
