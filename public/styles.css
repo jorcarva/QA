@@ -244,12 +244,17 @@ img { max-width: 100%; }
   align-items: center;
   gap: 10px;
   background: var(--card);
-  border: 1px solid var(--card-border);
+  border: 1px solid rgba(124, 58, 237, 0.40);
   border-radius: 999px;
   padding: 9px 9px 9px 20px;
-  box-shadow: var(--card-shadow);
+  box-shadow: 0 0 0 1.5px var(--accent-soft), 0 14px 40px -20px rgba(124, 58, 237, 0.35);
+  animation: composerGlow 2.6s ease-in-out infinite;
 }
-.composer .pen { width: 20px; height: 20px; color: var(--faint); flex: 0 0 auto; }
+.composer .pen { width: 20px; height: 20px; color: var(--accent); flex: 0 0 auto; }
+@keyframes composerGlow {
+  0%, 100% { box-shadow: 0 0 0 1.5px var(--accent-soft), 0 12px 36px -20px rgba(124, 58, 237, 0.28); }
+  50%      { box-shadow: 0 0 0 2px var(--accent-soft), 0 16px 46px -18px rgba(124, 58, 237, 0.48); }
+}
 .composer input {
   flex: 1 1 auto;
   min-width: 0;
@@ -279,16 +284,6 @@ img { max-width: 100%; }
 .send:hover { transform: scale(1.05); }
 .send:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 .send svg { width: 20px; height: 20px; }
-.composer.locked {
-  border-color: rgba(124, 58, 237, 0.45);
-  box-shadow: 0 0 0 4px var(--accent-soft), 0 14px 40px -18px rgba(124, 58, 237, 0.40);
-  animation: composerGlow 2.6s ease-in-out infinite;
-}
-.composer.locked .pen { color: var(--accent); }
-@keyframes composerGlow {
-  0%, 100% { box-shadow: 0 0 0 4px var(--accent-soft), 0 14px 40px -18px rgba(124, 58, 237, 0.32); }
-  50%      { box-shadow: 0 0 0 5px var(--accent-soft), 0 16px 48px -16px rgba(124, 58, 237, 0.55); }
-}
 
 .lock-note {
   display: flex;
@@ -496,5 +491,5 @@ img { max-width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
-  .composer.locked { animation: none; }
+  .composer { animation: none; }
 }
