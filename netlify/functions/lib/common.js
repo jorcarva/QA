@@ -1,7 +1,14 @@
 "use strict";
 
 const crypto = require("crypto");
-const { getStore } = require("@netlify/blobs");
+const { getStore, connectLambda } = require("@netlify/blobs");
+
+// Funções clássicas (exports.handler) têm de ligar o contexto do Blobs ao
+// evento Lambda antes de aceder ao armazenamento. Chamar no início de cada
+// handler que usa o store.
+function initBlobs(event) {
+  try { connectLambda(event); } catch (e) { /* já ligado / ambiente local */ }
+}
 
 const DEFAULT_QUESTION = "Qual é o maior desafio de Angola hoje?";
 
@@ -183,6 +190,7 @@ function parseBody(event) {
 module.exports = {
   DEFAULT_QUESTION,
   USERS, userById, userByUsername, publicUser,
+  initBlobs,
   store, ensureSeed, getQuestion, setQuestion,
   getComment, putComment, listCommentIds, addToIndex, buildState,
   sign, verifyToken, currentUser, cookieHeader, safeEqual,

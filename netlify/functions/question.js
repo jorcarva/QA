@@ -1,8 +1,9 @@
 "use strict";
-const { currentUser, parseBody, setQuestion, buildState, json } = require("./lib/common");
+const { initBlobs, currentUser, parseBody, setQuestion, buildState, json } = require("./lib/common");
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "PUT") return json(405, { error: "Método não permitido." });
+  initBlobs(event);
   const user = currentUser(event);
   if (!user) return json(401, { error: "Sessão necessária." });
   if (user.role !== "admin") return json(403, { error: "Apenas administradores." });
