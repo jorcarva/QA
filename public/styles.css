@@ -1,11 +1,11 @@
 /* Pergunta do Dia — layout: coluna central sobre aurora pastel. */
 :root {
-  --bg: #f4eff8;
-  --aurora-1: rgba(190, 162, 234, 0.42);
-  --aurora-2: rgba(240, 164, 206, 0.40);
-  --aurora-3: rgba(178, 188, 238, 0.38);
-  --aurora-4: rgba(255, 208, 180, 0.42);
-  --center-glow: rgba(255, 255, 255, 0.72);
+  --bg: #ffffff;
+  --dot: rgba(99, 91, 122, 0.06);
+  --ring-a: rgba(124, 58, 237, 0.13);
+  --ring-b: rgba(224, 85, 127, 0.11);
+  --orb-a: rgba(236, 170, 214, 0.30);
+  --orb-b: rgba(178, 190, 240, 0.30);
   --fg: #2b2435;
   --muted: #8a8398;
   --faint: #b4adbf;
@@ -26,12 +26,12 @@
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --bg: #141019;
-    --aurora-1: rgba(130, 80, 220, 0.34);
-    --aurora-2: rgba(210, 100, 170, 0.26);
-    --aurora-3: rgba(90, 120, 200, 0.28);
-    --aurora-4: rgba(200, 130, 110, 0.24);
-    --center-glow: rgba(255, 255, 255, 0.04);
+    --bg: #0f0d14;
+    --dot: rgba(255, 255, 255, 0.05);
+    --ring-a: rgba(167, 139, 250, 0.16);
+    --ring-b: rgba(244, 143, 177, 0.13);
+    --orb-a: rgba(219, 94, 170, 0.20);
+    --orb-b: rgba(96, 120, 210, 0.22);
     --fg: #ece8f2;
     --muted: #9a93a8;
     --faint: #6f6880;
@@ -67,14 +67,60 @@ img { max-width: 100%; }
   position: fixed;
   inset: 0;
   z-index: -1;
-  background:
-    radial-gradient(58% 52% at 3% -2%, var(--aurora-3), transparent 58%),
-    radial-gradient(56% 50% at 98% -4%, var(--aurora-4), transparent 56%),
-    radial-gradient(40% 62% at 104% 46%, var(--aurora-2), transparent 56%),
-    radial-gradient(60% 56% at -4% 104%, var(--aurora-1), transparent 58%),
-    radial-gradient(56% 56% at 103% 104%, var(--aurora-2), transparent 58%),
-    radial-gradient(56% 44% at 50% 30%, var(--center-glow), transparent 72%),
-    var(--bg);
+  overflow: hidden;
+  background-color: var(--bg);
+  /* textura abstrata de pontos muito ténue sobre o branco */
+  background-image: radial-gradient(var(--dot) 1px, transparent 1.6px);
+  background-size: 26px 26px;
+  background-position: -13px -13px;
+}
+.aurora .shape { position: absolute; display: block; }
+
+/* anéis finos abstratos */
+.aurora .ring {
+  border-radius: 50%;
+  border: 1.5px solid var(--ring-a);
+}
+.aurora .ring-1 {
+  width: 440px; height: 440px;
+  top: -150px; left: -130px;
+}
+.aurora .ring-2 {
+  width: 560px; height: 560px;
+  right: -190px; bottom: -220px;
+  border-color: var(--ring-b);
+}
+
+/* halos suaves nos cantos */
+.aurora .orb {
+  border-radius: 50%;
+  filter: blur(18px);
+}
+.aurora .orb-1 {
+  width: 360px; height: 360px;
+  top: -120px; right: -90px;
+  background: radial-gradient(circle at center, var(--orb-a), transparent 68%);
+}
+.aurora .orb-2 {
+  width: 400px; height: 400px;
+  left: -130px; bottom: -150px;
+  background: radial-gradient(circle at center, var(--orb-b), transparent 68%);
+}
+
+/* traço fino na diagonal */
+.aurora .bar-1 {
+  width: 220px; height: 1.5px;
+  top: 24%; right: 8%;
+  background: linear-gradient(90deg, transparent, var(--ring-a), transparent);
+  transform: rotate(-24deg);
+}
+
+@media (max-width: 560px) {
+  .aurora .ring-1 { width: 300px; height: 300px; top: -110px; left: -110px; }
+  .aurora .ring-2 { width: 360px; height: 360px; right: -140px; bottom: -160px; }
+  .aurora .orb-1 { width: 240px; height: 240px; }
+  .aurora .orb-2 { width: 260px; height: 260px; }
+  .aurora .bar-1 { display: none; }
 }
 
 .wrap {
